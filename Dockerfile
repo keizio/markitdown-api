@@ -6,13 +6,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+ARG VERSION=dev
+ENV APP_VERSION=${VERSION}
+
+LABEL org.opencontainers.image.version=${VERSION}
+
 COPY requirements.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-COPY app.py .
+COPY app.py VERSION .
 
 EXPOSE 8000
 

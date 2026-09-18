@@ -10,6 +10,14 @@ from markitdown import MarkItDown
 
 load_dotenv()
 
+APP_VERSION = os.getenv("APP_VERSION")
+if not APP_VERSION:
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "VERSION")) as f:
+            APP_VERSION = f.read().strip()
+    except OSError:
+        APP_VERSION = "dev"
+
 API_KEY = os.getenv("API_KEY")
 MAX_DOWNLOAD_BYTES = int(os.getenv("MAX_DOWNLOAD_BYTES", 50 * 1024 * 1024))
 DOWNLOAD_TIMEOUT = int(os.getenv("DOWNLOAD_TIMEOUT", 30))
@@ -89,7 +97,7 @@ def check_document(extension, mime):
 
 @app.get("/health")
 def health():
-    return jsonify(status="ok")
+    return jsonify(status="ok", version=APP_VERSION)
 
 
 @app.post("/convert")
