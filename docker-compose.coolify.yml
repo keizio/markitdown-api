@@ -1,0 +1,21 @@
+# Coolify deployment — paste this or point Coolify to this file.
+# In Coolify: New Resource → Docker Compose → paste this file,
+# then set API_KEY (required) in Environment Variables.
+# Coolify handles HTTPS + routing; no host port mapping needed.
+services:
+  api:
+    image: ghcr.io/keizio/markitdown-api:latest
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - PORT=8000
+      - API_KEY=${API_KEY:?API_KEY is required - set it in Coolify env vars}
+      - MAX_DOWNLOAD_BYTES=${MAX_DOWNLOAD_BYTES:-52428800}
+      - DOWNLOAD_TIMEOUT=${DOWNLOAD_TIMEOUT:-30}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
